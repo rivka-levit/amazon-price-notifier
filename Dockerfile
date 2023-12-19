@@ -9,6 +9,7 @@ WORKDIR /app
 
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add bind-tools && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     rm -rf /tmp && \
     adduser --disabled-password --no-create-home notifier-user
