@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from selenium import webdriver
-from notifier import EmailNotifier
+from notifier import EmailNotifier, AbstractNotifier
+from crawler import AmazonPriceCrawler
 
 
 class AbstractWatcher(ABC):
@@ -14,16 +14,29 @@ class AbstractWatcher(ABC):
 class AmazonPriceWatcher(AbstractWatcher):
     """Amazon price watcher."""
 
-    _options = webdriver.ChromeOptions()
+    _notifiers = set()
 
-    def __init__(self, url):
-        AmazonPriceWatcher.set_options()
-        self.notifier = EmailNotifier()
+    def __init__(self, url, notifiers: list[AbstractNotifier] = None):
+        self.crawler = AmazonPriceCrawler()
         self._url = url
 
+        if notifiers:
+            for i in notifiers:
+                self.add_notifier(i)
+        else:
+            self.add_notifier(EmailNotifier())
+
     @property
-    def options(self):
-        return self._options
+    def notifiers(self):
+        return self._notifiers
+
+    def add_notifier(self, notifier):
+        if isinstance(notifier, AbstractNotifier):
+            self._notifiers.add(notifier)
+
+    def delete_notifier(self, notifier):
+        if notifier in self._notifiers:
+            self._notifiers.remove(notifier)
 
     @property
     def url(self):
@@ -42,24 +55,6 @@ class AmazonPriceWatcher(AbstractWatcher):
                              "https://www.amazon.com/")
 
         self._url = product_url
-
-    @classmethod
-    def set_options(cls) -> None:
-        """Set options to Chrome webdriver."""
-
-        list_options = ['disable-infobars', 'start-maximized',
-                        'disable-dev-shm-usage', 'no-sandbox',
-                        'disable-gpu', 'headless',
-                        'disable-blink-features=AutomationControlled']
-
-        for option in list_options:
-            cls._options.add_argument(option)
-
-        cls._options.add_experimental_option('excludeSwitches',
-                                             ['enable-automation'])
-
-    def crawl(self):
-        """Crawl the price of a product."""
 
     def watch(self):
         pass
