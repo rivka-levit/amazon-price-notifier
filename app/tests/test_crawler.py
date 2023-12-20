@@ -26,37 +26,21 @@ class TestCrawler(TestCase):
     def test_clean_data_return_float(self):
         """Test clean_data method returns a float number."""
 
-        data = ('16.', '35')
-        expected_result = float(f'{data[0]}{data[1]}')
+        data = ('16', '35')
+        expected_result = float(f'{data[0]}.{data[1]}')
 
         result = self.crawler.clean_data(*data)
 
         self.assertIsInstance(result, float)
         self.assertEqual(result, expected_result)
 
-    def test_clean_data_unexpected_arg_error(self):
-        """Test clean_data raise error with not enough arguments."""
-
-        data = '16'
-
-        with self.assertRaises(ValueError):
-            self.crawler.clean_data(data)
-
     def test_clean_data_unexpected_type_arg_error(self):
         """Test clean_data raise error with not string type argument."""
 
-        data = ('16.', 35)
+        data = ('16', 35)
 
         with self.assertRaises(ValueError):
-            self.crawler.clean_data(data)
-
-    def test_clean_data_unexpected_first_value_error(self):
-        """Test clean_data raise error with wrong first argument."""
-
-        data = ('1', '6')
-
-        with self.assertRaises(ValueError):
-            self.crawler.clean_data(data)
+            self.crawler.clean_data(*data)
 
     def test_clean_data_convert_float_error(self):
         """Test clean_data raise error when converting to float a wrong value."""
@@ -64,4 +48,15 @@ class TestCrawler(TestCase):
         data = ('rrf', 'asdf')
 
         with self.assertRaises(ValueError):
-            self.crawler.clean_data(data)
+            self.crawler.clean_data(*data)
+
+    def test_crawl_price_success(self):
+        """Test crawling price of a product successfully."""
+
+        url = 'https://www.amazon.com/PF-WaterWorks-PF0989-Disposal-Installation/dp/B078H38Q1M/'
+
+        price = self.crawler.crawl(url)
+
+        self.assertIsInstance(price, tuple)
+        self.assertIsInstance(price[0], str)
+        self.assertIsInstance(price[1], float)
