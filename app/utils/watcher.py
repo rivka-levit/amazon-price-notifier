@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from notifier import EmailNotifier, AbstractNotifier
-from crawler import AmazonPriceCrawler
+from utils.notifier import EmailNotifier, AbstractNotifier
+from utils.crawler import AmazonPriceCrawler
 
 
 class AbstractWatcher(ABC):
@@ -14,12 +14,10 @@ class AbstractWatcher(ABC):
 class AmazonPriceWatcher(AbstractWatcher):
     """Amazon price watcher."""
 
-    _notifiers = set()
-
     def __init__(self, url, notifiers: list[AbstractNotifier] = None):
         self.crawler = AmazonPriceCrawler()
         self._url = url
-
+        self._notifiers = set()
         if notifiers:
             for i in notifiers:
                 self.add_notifier(i)
