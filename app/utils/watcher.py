@@ -59,4 +59,3 @@ class AmazonPriceWatcher(AbstractWatcher):
     def watch(self):
         pass
 
-
