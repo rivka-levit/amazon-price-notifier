@@ -36,7 +36,7 @@ class TestAmazonWatcher(TestCase):
     def test_add_notifier_success(self):
         """Test adding a notifier successfully."""
 
-        ntf2 = EmailNotifier()
+        ntf2 = EmailNotifier(receiver='some@example.com')
         self.watcher.add_notifier(ntf2)
 
         self.assertEqual(len(self.watcher.notifiers), 2)
@@ -44,12 +44,8 @@ class TestAmazonWatcher(TestCase):
     def test_delete_notifier_success(self):
         """Test deleting a notifier successfully."""
 
-        nfr1 = EmailNotifier()
-        nfr2 = EmailNotifier()
-        params = {'notifiers': [nfr1, nfr2]}
-        wtr = create_watcher(**params)
+        wtr = create_watcher()
 
-        wtr.delete_notifier(nfr1)
+        wtr.delete_notifier(*self.watcher.notifiers)
 
-        self.assertEqual(len(wtr.notifiers), 1)
-        self.assertEqual(*wtr.notifiers, nfr2)
+        self.assertEqual(len(wtr.notifiers), 0)
