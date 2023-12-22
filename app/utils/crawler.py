@@ -2,8 +2,11 @@ from abc import ABC, abstractmethod
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 from amazoncaptcha import AmazonCaptcha  # noqa
+
+import time
 
 
 class AbstractCrawler(ABC):
@@ -47,9 +50,21 @@ class AmazonPriceCrawler (AbstractCrawler):
             options=self.options
         )
         driver.get(url)
+        # print(driver.page_source)
 
-        # captcha = AmazonCaptcha.fromdriver(driver)
-        # solution = captcha.solve()
+        try:
+            input_captcha = driver.find_element(By.ID, 'captchacharacters')
+
+            captcha = AmazonCaptcha.fromdriver(driver)
+            solution = captcha.solve()
+            print(solution)
+            input_captcha.send_keys(solution)
+            button = driver.find_element(By.LINK_TEXT, 'Continue shopping')
+
+            button.click()
+            driver.get(url)
+        except NoSuchElementException:
+            pass
 
         price_symbol = driver.find_element(
             By.XPATH,
