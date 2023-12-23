@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from utils.notifier import EmailNotifier, AbstractNotifier
 from utils.crawler import AmazonPriceCrawler
@@ -56,5 +57,18 @@ class AmazonPriceWatcher(AbstractWatcher):
         self._url = product_url
 
     def watch(self):
-        pass
+        """Watch the product price and notify the observers."""
 
+        currency, sample_price = self.crawler.crawl(self.url)
+        price = sample_price
+
+        while price == sample_price:
+            time.sleep(900)
+
+            currency, price = self.crawler.crawl(self.url)
+
+            if price != sample_price:
+                str_price = f'{currency}{price:.2f}'
+
+                for notifier in self._notifiers:
+                    notifier.notify(str_price)

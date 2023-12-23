@@ -1,8 +1,9 @@
 """
 Test observing the price and sending notification.
 """
-
+import time
 from unittest import TestCase
+from unittest.mock import patch
 
 from utils.watcher import AmazonPriceWatcher
 from utils.crawler import AmazonPriceCrawler
@@ -90,3 +91,19 @@ class TestAmazonWatcher(TestCase):
                 r'The product url must start with https://www.amazon.com/'
         ):
             create_watcher(url=non_amazon_url)
+
+    @patch('time.sleep')
+    @patch('utils.notifier.EmailNotifier.notify')
+    @patch('utils.crawler.AmazonPriceCrawler.crawl')
+    def test_watch_price_change_success(self,
+                                        patched_crawl,
+                                        patched_notify,
+                                        patched_sleep):
+        """Test watch price change and call notify."""
+
+        patched_crawl.side_effect = [('$', 16.63)] * 3 + [('$', 15.52)]
+
+        self.watcher.watch()
+
+        self.assertEqual(patched_crawl.call_count, 4)
+        self.assertEqual(patched_notify.call_count, 1)
