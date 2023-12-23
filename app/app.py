@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
+
+from utils.watcher import AmazonPriceWatcher
 
 app = Flask(__name__)
 
@@ -8,10 +10,14 @@ def index():
     if request.method == 'GET':
         return render_template('index.html')
     if request.method == 'POST':
-        return redirect('started.html')
+        product_url = request.form.get('product')
+        watcher = AmazonPriceWatcher(product_url)
+        watcher.watch()
+
+        return redirect(url_for('started'))
 
 
-@app.route('/started.html')
+@app.route('/started')
 def started():
     return render_template('started.html')
 
