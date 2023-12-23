@@ -57,12 +57,14 @@ class AmazonPriceCrawler (AbstractCrawler):
 
             captcha = AmazonCaptcha.fromdriver(driver)
             solution = captcha.solve()
-            print(solution)
+
             input_captcha.send_keys(solution)
-            button = driver.find_element(By.LINK_TEXT, 'Continue shopping')
+            driver.save_screenshot('screenshot.png')
+            button = driver.find_element(By.XPATH, '//button[@class="a-button-text"]')
 
             button.click()
-            driver.get(url)
+            time.sleep(2)
+            # driver.get(url)
         except NoSuchElementException:
             pass
 
