@@ -16,7 +16,8 @@ class AmazonPriceWatcher(AbstractWatcher):
 
     def __init__(self, url, notifiers: list[AbstractNotifier] = None):
         self.crawler = AmazonPriceCrawler()
-        self._url = url
+        self._url = None
+        self.url = url
         self._notifiers = set()
         if notifiers:
             for i in notifiers:
