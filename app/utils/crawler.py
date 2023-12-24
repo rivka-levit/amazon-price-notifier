@@ -58,26 +58,29 @@ class AmazonPriceCrawler (AbstractCrawler):
             solution = captcha.solve()
             input_captcha.send_keys(solution)
 
-            button = driver.find_element(By.XPATH, '//button[@class="a-button-text"]')
+            button = driver.find_element(By.XPATH,
+                                         '//button[@class="a-button-text"]')
             button.click()
             time.sleep(2)
-            # driver.get(url)
         except NoSuchElementException:
             pass
 
         price_symbol = driver.find_element(
             By.XPATH,
-            '//div[@id="corePriceDisplay_desktop_feature_div"]//span[@class="a-price-symbol"]'
+            ('//div[@id="corePriceDisplay_desktop_feature_div"]//'
+             'span[@class="a-price-symbol"]')
         ).text
 
         price_whole = driver.find_element(
             By.XPATH,
-            '//div[@id="corePriceDisplay_desktop_feature_div"]//span[@class="a-price-whole"]'
+            ('//div[@id="corePriceDisplay_desktop_feature_div"]//'
+             'span[@class="a-price-whole"]')
         ).text
 
         price_fraction = driver.find_element(
             By.XPATH,
-            '//div[@id="corePriceDisplay_desktop_feature_div"]//span[@class="a-price-fraction"]'
+            ('//div[@id="corePriceDisplay_desktop_feature_div"]//'
+             'span[@class="a-price-fraction"]')
         ).text
 
         driver.quit()

@@ -77,9 +77,3 @@ class EmailNotifier(AbstractNotifier):
             server.starttls(context=context)
             server.login(self.sender, self.password)
             server.sendmail(self.sender, self.receiver, msg.as_string())
-
-
-# if __name__ == '__main__':
-#     ntf = EmailNotifier()
-#     print(ntf.__class__.__name__)
-#     ntf.notify('$63.85')
