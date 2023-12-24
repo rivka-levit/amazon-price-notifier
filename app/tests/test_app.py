@@ -43,3 +43,16 @@ class TestApp(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.request.path, '/started')
         self.assertIn('Well done!', r.get_data(as_text=True))
+
+    @patch('time.sleep', return_value=None)
+    @patch('utils.watcher.AmazonPriceWatcher.watch', return_value=None)
+    def test_index_post_wrong_url_error_page(self, patched_watch, patched_sleep):
+        """Test index page post with wrong url returns error.html"""
+
+        url = 'https://www.udemy.com'
+
+        r = self.client.post('/', data=dict(product=url), follow_redirects=True)
+
+        self.assertEqual(patched_watch.call_count, 0)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.request.path, '/error')
